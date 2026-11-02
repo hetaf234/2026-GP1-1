@@ -24,6 +24,3 @@ Edit templates and PR guidance in reviewed changes. Do not add remote collaborat
 
 The existing hetaf234/2026-GP1-1 repository, future branch protection and approvals, and action versions pinned in deployment/action-pins.json.
 
-## Important Notes
-
-No bot-authored commits, automatic pushes or Git author configuration are used. Backend and Android delivery are separate. Unknown team usernames must not be guessed.
