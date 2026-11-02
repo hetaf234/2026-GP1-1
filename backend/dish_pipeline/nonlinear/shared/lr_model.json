@@ -1,0 +1,29 @@
+{
+  "C": 10.0,
+  "features": [
+    "original_confidence",
+    "original_margin"
+  ],
+  "scaler_mean": [
+    0.5964470685939358,
+    0.5089356232970935
+  ],
+  "scaler_scale": [
+    0.3097510608072132,
+    0.37070292898901097
+  ],
+  "standardized_coefficients": [
+    7.062369247328798,
+    -3.3210465990106637
+  ],
+  "standardized_intercept": -1.7009928919709678,
+  "class_weight": "balanced",
+  "regularization": "L2",
+  "solver": "lbfgs",
+  "max_iter": 2000,
+  "tolerance": 1e-08,
+  "labels": {
+    "supported": 1,
+    "ood": 0
+  }
+}

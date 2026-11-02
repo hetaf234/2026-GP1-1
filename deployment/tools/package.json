@@ -1,0 +1,8 @@
+{
+  "name": "misbar-ci-tools",
+  "version": "1.0.0",
+  "private": true,
+  "devDependencies": {
+    "firebase-tools": "15.30.2"
+  }
+}

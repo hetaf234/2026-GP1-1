@@ -1,0 +1,72 @@
+# INACTIVE PREPARATION TEMPLATE. Owner approval required before activation.
+name: Misbar backend test deployment
+'on':
+  push:
+    branches:
+    - main
+    paths:
+    - backend/**
+    - data/**
+    - deployment/**
+    - .github/workflows/backend-deploy.yml
+permissions:
+  contents: read
+concurrency:
+  group: misbar-backend-test-deployment
+  cancel-in-progress: false
+jobs:
+  test:
+    if: github.repository_id == '1441817440' && github.ref == 'refs/heads/main' &&
+      vars.MISBAR_BACKEND_DEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      with:
+        persist-credentials: false
+    - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0
+      with:
+        python-version: '3.14'
+    - name: Install frozen test dependencies
+      run: python -m pip install --extra-index-url https://download.pytorch.org/whl/cpu
+        -r deployment/test-requirements.txt -c deployment/requirements.lock.txt
+    - name: Backend tests before any cloud identity
+      run: python deployment/run_checks.py --backend
+    - name: Scan release candidates
+      run: python deployment/secret_scan.py
+  deploy:
+    needs: test
+    if: github.repository_id == '1441817440' && github.ref == 'refs/heads/main' &&
+      vars.MISBAR_BACKEND_DEPLOY_ENABLED == 'true'
+    environment: misbar-test
+    permissions:
+      contents: read
+      pull-requests: read
+      id-token: write
+    runs-on: ubuntu-24.04
+    env:
+      GH_TOKEN: ${{ github.token }}
+      MISBAR_BACKEND_DEPLOY_APPROVED: ${{ vars.MISBAR_BACKEND_DEPLOY_ENABLED }}
+      MISBAR_BUILD_SOURCE_BUCKET: ${{ vars.MISBAR_BUILD_SOURCE_BUCKET }}
+      MISBAR_CLOUD_BUILD_ACCOUNT: ${{ vars.MISBAR_CLOUD_BUILD_ACCOUNT }}
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      with:
+        persist-credentials: false
+    - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0
+      with:
+        python-version: '3.14'
+    - name: Require private protected main and current-head approval
+      run: python deployment/guard_reviewed_main.py
+    - uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093
+      with:
+        workload_identity_provider: ${{ vars.MISBAR_BACKEND_WIF_PROVIDER }}
+        service_account: ${{ vars.MISBAR_BACKEND_ORCHESTRATOR }}
+        project_id: project-51f11627-cb56-4c1e-978
+    - uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db
+    - id: build
+      name: 'Cloud Build: tests, pinned models, image smoke, private registry'
+      run: python deployment/build_cloud.py
+    - name: Update only the existing private testing service
+      run: python deployment/deploy_backend.py --execute --image "$TESTED_IMAGE"
+      env:
+        TESTED_IMAGE: ${{ steps.build.outputs.image }}

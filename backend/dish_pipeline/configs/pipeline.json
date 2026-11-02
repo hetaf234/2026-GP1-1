@@ -1,0 +1,17 @@
+{
+  "ingredient_data_file": "Misbar_Normlized_IngredientsXAllergen.json",
+  "claude_model": "claude-sonnet-5-5",
+  "claude_timeout_seconds": 120,
+  "claude_request_interval_seconds": 1.6,
+  "food_gate_max_tokens": 256,
+  "ingredients_max_tokens": 4096,
+  "max_upload_bytes": 4194304,
+  "max_image_pixels": 20000000,
+  "normalization_enabled": true,
+  "normalization_prompt": "ingredient_normalization_prompt.txt",
+  "normalization_schema": "ingredient_normalization_schema_v1.json",
+  "normalization_max_tokens": 8192,
+  "allergy_matching_enabled": false,
+  "dish_display_mapping_file": "misbar_dish_name_mapping.json",
+  "dish_class_mapping_file": "nonlinear/shared/class_mapping.json"
+}

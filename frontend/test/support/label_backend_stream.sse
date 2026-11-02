@@ -1,0 +1,34 @@
+: Synthetic mocked Label contract; no real image or provider call.
+
+id: label-fixture:1
+event: progress
+data: {"scan_id": "label-fixture", "sequence": 1, "stage": "image_received", "status": "completed"}
+
+id: label-fixture:2
+event: progress
+data: {"scan_id": "label-fixture", "sequence": 2, "stage": "extracting_text", "status": "started"}
+
+id: label-fixture:3
+event: progress
+data: {"scan_id": "label-fixture", "sequence": 3, "stage": "extracting_text", "status": "completed"}
+
+id: label-fixture:4
+event: progress
+data: {"scan_id": "label-fixture", "sequence": 4, "stage": "identifying_ingredients", "status": "started"}
+
+id: label-fixture:5
+event: progress
+data: {"scan_id": "label-fixture", "sequence": 5, "stage": "identifying_ingredients", "status": "completed"}
+
+id: label-fixture:6
+event: progress
+data: {"scan_id": "label-fixture", "sequence": 6, "stage": "checking_allergens", "status": "started"}
+
+id: label-fixture:7
+event: progress
+data: {"scan_id": "label-fixture", "sequence": 7, "stage": "checking_allergens", "status": "completed"}
+
+id: label-fixture:8
+event: outcome
+data: {"scan_id": "label-fixture", "sequence": 8, "http_status": 200, "result": {"success": true, "status": "completed", "error_title": null, "is_safe": false, "extracted_ocr_text": "Ingredients: Milk, Sugar", "ingredient_list": "Milk, Sugar", "allergens_detected": [{"allergen": "Milk", "matched_ingredients": ["milk"], "is_user_allergen": true}], "total_allergens_count": 1, "ocr_engine": "google_vision", "message": "Analysis completed successfully."}}
+

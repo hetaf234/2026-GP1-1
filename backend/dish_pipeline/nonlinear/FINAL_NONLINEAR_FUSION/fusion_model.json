@@ -1,0 +1,35 @@
+{
+  "C": 10.0,
+  "features": [
+    "LR_supportedness",
+    "OE_supportedness",
+    "LR_times_OE"
+  ],
+  "scaler_mean": [
+    0.41237555865577497,
+    0.4797224496527036,
+    0.33146279381457944
+  ],
+  "scaler_scale": [
+    0.4145022705006643,
+    0.37547245867583723,
+    0.39260927122485023
+  ],
+  "standardized_coefficients": [
+    0.733467022250853,
+    0.9270079822167849,
+    1.6195936750597146
+  ],
+  "standardized_intercept": -0.6120777547446922,
+  "class_weight": "balanced",
+  "regularization": "L2",
+  "solver": "lbfgs",
+  "max_iter": 2000,
+  "tolerance": 1e-08,
+  "raw_features_predefined": true,
+  "original_confidence_is_not_a_feature": true,
+  "labels": {
+    "supported": 1,
+    "ood": 0
+  }
+}

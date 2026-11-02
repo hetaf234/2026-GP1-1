@@ -1,0 +1,19 @@
+# The frozen dish runtime's tested versions remain unchanged.
+torch==2.13.0
+torchvision==0.28.0
+Pillow==12.3.0
+numpy==2.5.3
+scipy==1.18.1
+certifi
+
+# Label service dependencies plus the deployment HTTP entry point.
+fastapi>=0.115.0,<1
+uvicorn[standard]>=0.30.0,<1
+python-multipart>=0.0.9
+pydantic>=2.0.0,<3
+transformers>=4.40.0,<5
+safetensors
+google-cloud-vision>=3.7.0
+pandas>=2.0.0
+requests>=2.31.0
+firebase-admin>=7.0.0

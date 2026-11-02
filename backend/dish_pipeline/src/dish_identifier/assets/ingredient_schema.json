@@ -1,0 +1,55 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "dinov2_predicted_dish",
+    "ingredients"
+  ],
+  "properties": {
+    "dinov2_predicted_dish": {
+      "type": "string"
+    },
+    "ingredients": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "confidence",
+          "allergens"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "confidence": {
+            "type": "number"
+          },
+          "allergens": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "Celery",
+                "Cereals containing gluten",
+                "Crustaceans",
+                "Egg",
+                "Fish",
+                "Lupin",
+                "Milk",
+                "Molluscs",
+                "Mustard",
+                "Peanut",
+                "Sesame",
+                "Soybean",
+                "Sulphur dioxide and sulphites",
+                "Tree nuts"
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

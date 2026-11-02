@@ -1,0 +1,181 @@
+# INACTIVE PREPARATION TEMPLATE. Owner approval required before activation.
+name: Misbar Android private distribution
+'on':
+  push:
+    branches:
+    - main
+    paths:
+    - frontend/**
+    - deployment/policy.json
+    - deployment/check_apk.py
+    - deployment/sign_apk.py
+    - deployment/firebase_distribution.py
+    - deployment/distribution_gate.py
+    - .github/workflows/android-distribution.yml
+permissions:
+  contents: read
+concurrency:
+  group: misbar-android-distribution
+  cancel-in-progress: false
+jobs:
+  build:
+    if: github.repository_id == '1441817440' && github.ref == 'refs/heads/main' &&
+      vars.MISBAR_ANDROID_DISTRIBUTION_ENABLED == 'true'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+      MISBAR_ANDROID_UPLOAD_APPROVED: ${{ vars.MISBAR_ANDROID_DISTRIBUTION_ENABLED
+        }}
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      with:
+        persist-credentials: false
+    - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0
+      with:
+        python-version: '3.14'
+    - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad
+      with:
+        distribution: temurin
+        java-version: '21'
+    - name: Verify reviewed main and approved wireless connectivity
+      run: 'python deployment/guard_reviewed_main.py
+
+        python deployment/distribution_gate.py'
+    - name: Install the approved Flutter commit
+      run: bash deployment/install_flutter.sh
+    - name: Resolve locked Flutter dependencies
+      run: flutter pub get
+      working-directory: frontend
+    - name: Check formatting
+      run: dart format --output=none --set-exit-if-changed lib test
+      working-directory: frontend
+    - name: Analyze Flutter
+      run: flutter analyze --no-pub
+      working-directory: frontend
+    - name: Run mock widget and unit tests
+      run: flutter test --no-pub
+      working-directory: frontend
+    - name: Build without the approved signing private key
+      run: 'version="$(python3 deployment/android_version.py)"
+
+        api_url="$(python3 -c ''import json; print(json.load(open("deployment/policy.json"))["mobile_api_base_url"])'')"
+
+        cd frontend
+
+        flutter build apk --debug --no-pub --flavor misbar2 --build-number="$version"
+        --dart-define=MISBAR_SECOND_COPY=true --dart-define=MISBAR_API_BASE_URL="$api_url"'
+    - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+      with:
+        name: misbar-apk-${{ github.sha }}-${{ github.run_attempt }}
+        path: frontend/build/app/outputs/flutter-apk/app-misbar2-debug.apk
+        retention-days: 1
+        if-no-files-found: error
+      id: apk
+    outputs:
+      artifact_id: ${{ steps.apk.outputs.artifact-id }}
+  upload:
+    needs: build
+    if: github.repository_id == '1441817440' && github.ref == 'refs/heads/main' &&
+      vars.MISBAR_ANDROID_DISTRIBUTION_ENABLED == 'true'
+    environment: misbar-android-upload
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: read
+      id-token: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      MISBAR_ANDROID_UPLOAD_APPROVED: ${{ vars.MISBAR_ANDROID_DISTRIBUTION_ENABLED
+        }}
+      GOOGLE_CLOUD_QUOTA_PROJECT: misbar-ebea2
+    outputs:
+      release: ${{ steps.upload.outputs.release }}
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      with:
+        persist-credentials: false
+    - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0
+      with:
+        python-version: '3.14'
+    - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad
+      with:
+        distribution: temurin
+        java-version: '21'
+    - name: Verify separate upload and wireless prerequisites
+      run: 'python deployment/guard_reviewed_main.py
+
+        python deployment/distribution_gate.py'
+    - &id001
+      uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093
+      with:
+        workload_identity_provider: ${{ vars.MISBAR_ANDROID_WIF_PROVIDER }}
+        service_account: ${{ vars.MISBAR_ANDROID_DISTRIBUTOR }}
+        project_id: misbar-ebea2
+    - uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db
+    - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+      with:
+        artifact-ids: ${{ needs.build.outputs.artifact_id }}
+        path: ${{ runner.temp }}/misbar-apk
+        merge-multiple: true
+    - name: Install only publisher dependencies
+      run: python -m pip install -r deployment/distribution-requirements.txt
+    - name: Retrieve the approved existing key from the separately approved secret
+      run: 'test -n "$KEY_SECRET"
+
+        test -n "$KEY_VERSION"
+
+        umask 077
+
+        gcloud secrets versions access "$KEY_VERSION" --secret="$KEY_SECRET" --project=misbar-ebea2
+        --out-file="$RUNNER_TEMP/misbar-signing.keystore"'
+      env:
+        KEY_SECRET: ${{ vars.MISBAR_ANDROID_SIGNING_SECRET }}
+        KEY_VERSION: ${{ vars.MISBAR_ANDROID_SIGNING_SECRET_VERSION }}
+    - name: Sign and verify same package and certificate
+      run: python deployment/sign_apk.py "$RUNNER_TEMP/misbar-apk/app-misbar2-debug.apk"
+        "$RUNNER_TEMP/misbar-approved.apk" --version "$(python3 deployment/android_version.py)"
+      env:
+        MISBAR_SIGNING_KEYSTORE: ${{ runner.temp }}/misbar-signing.keystore
+        MISBAR_SIGNING_PASSWORD: android
+    - id: upload
+      name: Upload only; do not assign testers
+      run: python deployment/firebase_distribution.py --apk "$RUNNER_TEMP/misbar-approved.apk"
+    - name: Remove only temporary signing material
+      run: rm -f "$RUNNER_TEMP/misbar-signing.keystore" "$RUNNER_TEMP/misbar-approved.apk"
+      if: always()
+  tester-delivery:
+    needs: upload
+    if: vars.MISBAR_TESTER_DELIVERY_ENABLED == 'true'
+    environment: misbar-tester-delivery
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: read
+      id-token: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      MISBAR_ANDROID_UPLOAD_APPROVED: ${{ vars.MISBAR_ANDROID_DISTRIBUTION_ENABLED
+        }}
+      GOOGLE_CLOUD_QUOTA_PROJECT: misbar-ebea2
+      MISBAR_TESTER_DELIVERY_APPROVED: ${{ vars.MISBAR_TESTER_DELIVERY_ENABLED }}
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      with:
+        persist-credentials: false
+    - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0
+      with:
+        python-version: '3.14'
+    - name: Require distinct tester access approval
+      run: 'python deployment/guard_reviewed_main.py
+
+        python deployment/distribution_gate.py --delivery'
+    - *id001
+    - name: Install publisher dependencies
+      run: python -m pip install -r deployment/distribution-requirements.txt
+    - name: Assign this already uploaded release to the approved group
+      run: python deployment/firebase_distribution.py --release "$APPROVED_RELEASE"
+      env:
+        APPROVED_RELEASE: ${{ needs.upload.outputs.release }}

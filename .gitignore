@@ -1,0 +1,52 @@
+# Local and generated state
+.local/
+outputs/
+node_modules/
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.DS_Store
+.idea/
+.vscode/
+*.log
+firebase-debug.*
+firestore-debug.*
+ui-debug.*
+
+# Credentials and user backups (client google-services.json is intentionally kept)
+.env*
+!.env.example
+**/credentials/
+**/service-account*.json
+**/serviceAccount*.json
+**/application_default_credentials.json
+**/gha-creds-*.json
+**/*keystore*
+*.jks
+*.pem
+*.key
+backups/
+**/firestore-backup*/
+
+# Models remain in the pinned private image
+*.pt
+*.pth
+*.pkl
+*.safetensors
+*.bin
+*.tar
+*.tar.gz
+*.zip
+
+# Flutter/Android
+**/.dart_tool/
+**/.flutter-plugins*
+**/build/
+**/.gradle/
+**/local.properties
+**/GeneratedPluginRegistrant.java
+*.apk
+*.aab
+*.iml
+

@@ -1,0 +1,41 @@
+# Preparation only: no trigger exists. Requires separately approved IAM and build submission.
+steps:
+- name: gcr.io/cloud-builders/docker@sha256:fbc05705e6f24467e40ae8a4097ab9b8fae1116551f838fa2c55f4367427fc36
+  entrypoint: bash
+  args:
+  - -ceu
+  - mkdir -p .local && chmod 777 .local
+- name: us-central1-docker.pkg.dev/project-51f11627-cb56-4c1e-978/misbar-models/api@sha256:76f7809dd8e177b7c8343035f44006acb8faf14bf2dd5bb7ff1ee44c0fd7b83d
+  entrypoint: python
+  args:
+  - -B
+  - deployment/run_checks.py
+  - --backend
+- name: us-central1-docker.pkg.dev/project-51f11627-cb56-4c1e-978/misbar-models/api@sha256:76f7809dd8e177b7c8343035f44006acb8faf14bf2dd5bb7ff1ee44c0fd7b83d
+  entrypoint: python
+  args:
+  - -B
+  - deployment/prepare_runtime.py
+- name: gcr.io/cloud-builders/docker@sha256:fbc05705e6f24467e40ae8a4097ab9b8fae1116551f838fa2c55f4367427fc36
+  args:
+  - build
+  - --platform=linux/amd64
+  - --network=none
+  - -t
+  - us-central1-docker.pkg.dev/project-51f11627-cb56-4c1e-978/misbar-models/api:${_IMAGE_TAG}
+  - .local/runtime-context
+- name: gcr.io/cloud-builders/docker@sha256:fbc05705e6f24467e40ae8a4097ab9b8fae1116551f838fa2c55f4367427fc36
+  entrypoint: bash
+  args:
+  - -ceu
+  - cat deployment/runtime_smoke.py | docker run --rm -i --read-only --network=none
+    --cpus=4 --memory=8g --tmpfs /tmp --entrypoint python us-central1-docker.pkg.dev/project-51f11627-cb56-4c1e-978/misbar-models/api:${_IMAGE_TAG}
+    -B -
+images:
+- us-central1-docker.pkg.dev/project-51f11627-cb56-4c1e-978/misbar-models/api:${_IMAGE_TAG}
+options:
+  machineType: E2_HIGHCPU_8
+  logging: CLOUD_LOGGING_ONLY
+timeout: 1800s
+substitutions:
+  _IMAGE_TAG: not-approved-do-not-submit

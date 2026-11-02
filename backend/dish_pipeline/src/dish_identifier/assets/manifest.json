@@ -1,0 +1,32 @@
+{
+  "food_gate_prompt.txt": {
+    "sha256": "632bcef30e7502af49fb360d9197705a743c9b7ac2bbfc32ffd4de03f162ce73",
+    "source": "experiments/food_gate_200_20261019/prompt.txt",
+    "role": "Runtime copy; original source unchanged"
+  },
+  "food_gate_schema.json": {
+    "sha256": "fd413804a3553722da59b1a7bdfe1963a4d417bd144ea54f2645055569ad2485",
+    "source": "experiments/food_gate_200_20261019/schema.json",
+    "role": "Runtime copy; original source unchanged"
+  },
+  "ingredient_prompt.txt": {
+    "sha256": "569378a3564e865ad675353bc53c348417f72930a451989439352b40e9227d5e",
+    "source": "experiments/ingredient_allergen_fusion_200_20261018/inputs/prompt_template.txt",
+    "role": "Runtime copy; original source unchanged"
+  },
+  "ingredient_schema.json": {
+    "sha256": "f325042fbac85ec8a35edbaaa90a31c41dd4e0cea1de45910d4040dbc6249277",
+    "source": "experiments/ingredient_allergen_fusion_200_20261018/inputs/response_schema.json",
+    "role": "Runtime copy; original source unchanged"
+  },
+  "ingredient_normalization_schema_v1.json": {
+    "sha256": "4b602fdd7f30c35589bc1977add8f2af15e195c73a18f6eb13d2b9c4a2c89a33",
+    "source": "configs/ingredient_normalization_schema_v1.json",
+    "role": "User-authorized live ingredient normalization; exact version from reviewed trial"
+  },
+  "ingredient_normalization_prompt.txt": {
+    "sha256": "dc79cb28d6e39ee0f70e5a74ffece9b8ba07ce85e35ba864d9a02193a7fea67d",
+    "source": "src/dish_identifier/assets/ingredient_normalization_prompt.txt",
+    "role": "Active user-approved concise semantic grouping prompt, including cream sauce and prepared egg examples. Previous versions remain in Git history."
+  }
+}
