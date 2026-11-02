@@ -1,0 +1,24 @@
+rules_version = '2';
+
+// users/{uid}: private profile (name/email/timestamps), saved allergies,
+// and system-owned top-level language/role. Existing fields remain compatible.
+// All creation and updates go through the authenticated FastAPI backend using
+// Admin SDK/IAM. No client, including an admin-role client, may write documents.
+// Client writes are denied entirely, so no client-side schema validator can
+// bypass ownership or alter/delete system fields. No admin features are added.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isOwner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    match /users/{uid} {
+      allow read: if isOwner(uid);
+      allow create, update, delete: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

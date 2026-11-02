@@ -1,0 +1,9 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["image_type", "reason"],
+  "properties": {
+    "image_type": {"type": "string", "enum": ["SINGLE_DISH", "MULTIPLE_DISHES", "NOT_FOOD", "PACKAGED_PRODUCT_OR_LABEL", "RAW_INGREDIENTS", "UNCERTAIN"]},
+    "reason": {"type": "string"}
+  }
+}

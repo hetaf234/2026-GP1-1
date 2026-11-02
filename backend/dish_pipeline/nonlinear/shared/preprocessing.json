@@ -1,0 +1,27 @@
+{
+  "checkpoint_preprocessing": {
+    "image_size": 336,
+    "eval_resize": 378,
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ]
+  },
+  "image_color": "RGB",
+  "resize": "shorter side 378, bicubic",
+  "center_crop": [
+    336,
+    336
+  ],
+  "tensor": "float32 CHW in [0,1], then checkpoint ImageNet normalization",
+  "embedding": "raw frozen 768-vector, not L2 normalized",
+  "original_feature_contract": "float64 stable softmax of original float32 logits, confidence and margin cast to float32 then float64 as saved caches",
+  "oe_score": "float32 Torch softmax max over 121, cast to float64",
+  "score_direction": "higher = more supported; accept >= threshold"
+}

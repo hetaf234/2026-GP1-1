@@ -1,0 +1,89 @@
+{
+  "status": "PLAN_ONLY_NOT_APPLIED",
+  "provider_project": "project-51f11627-cb56-4c1e-978",
+  "pools_currently_found": 0,
+  "attribute_mapping": {
+    "google.subject": "assertion.sub",
+    "attribute.repository_id": "assertion.repository_id",
+    "attribute.repository_owner_id": "assertion.repository_owner_id",
+    "attribute.ref": "assertion.ref"
+  },
+  "providers": {
+    "backend": {
+      "condition": "assertion.repository_owner_id == '184541228' && assertion.repository_id == '1441817440' && assertion.repository_visibility == 'private' && assertion.ref == 'refs/heads/main' && assertion.event_name == 'push' && assertion.workflow_ref == 'hetaf234/2026-GP1-1/.github/workflows/backend-deploy.yml@refs/heads/main'"
+    },
+    "android": {
+      "condition": "assertion.repository_owner_id == '184541228' && assertion.repository_id == '1441817440' && assertion.repository_visibility == 'private' && assertion.ref == 'refs/heads/main' && assertion.event_name == 'push' && assertion.workflow_ref == 'hetaf234/2026-GP1-1/.github/workflows/android-distribution.yml@refs/heads/main'"
+    }
+  },
+  "proposed_grants": [
+    {
+      "identity": "dedicated GitHub backend orchestrator SA",
+      "role": "roles/cloudbuild.builds.editor",
+      "resource": "hosting project (build submission only)"
+    },
+    {
+      "identity": "orchestrator SA",
+      "role": "roles/iam.serviceAccountUser",
+      "resource": "dedicated Cloud Build builder SA only"
+    },
+    {
+      "identity": "orchestrator SA",
+      "role": "roles/storage.objectUser",
+      "resource": "dedicated source-staging bucket only; upload/read objects, without bucket creation or IAM"
+    },
+    {
+      "identity": "orchestrator SA",
+      "role": "roles/run.developer",
+      "resource": "existing testing service only"
+    },
+    {
+      "identity": "orchestrator SA",
+      "role": "roles/iam.serviceAccountUser",
+      "resource": "existing misbar-runtime service account only"
+    },
+    {
+      "identity": "dedicated Cloud Build builder SA",
+      "role": "roles/artifactregistry.writer",
+      "resource": "misbar-models repository only"
+    },
+    {
+      "identity": "builder SA",
+      "role": "roles/logging.logWriter",
+      "resource": "hosting project for Cloud Build logging"
+    },
+    {
+      "identity": "builder SA",
+      "role": "roles/storage.objectViewer",
+      "resource": "source-staging bucket only"
+    },
+    {
+      "identity": "dedicated Android distributor SA",
+      "role": "roles/firebaseappdistro.admin",
+      "resource": "Firebase project misbar-ebea2 only"
+    },
+    {
+      "identity": "Android distributor SA",
+      "role": "roles/secretmanager.secretAccessor",
+      "resource": "new approved signing secret only, if storage is separately approved"
+    },
+    {
+      "identity": "numeric repository principalSet restricted by provider condition",
+      "role": "roles/iam.workloadIdentityUser",
+      "resource": "corresponding dedicated CI service account only"
+    },
+    {
+      "identity": "backend orchestrator SA",
+      "role": "roles/storage.bucketViewer",
+      "resource": "dedicated source-staging bucket only; metadata existence check, no bucket creation or IAM"
+    }
+  ],
+  "never_grant": [
+    "Owner",
+    "Editor",
+    "project-wide secretAccessor",
+    "runtime Firebase/Firestore access to builder",
+    "Cloud Run stable-service write permissions"
+  ],
+  "current_runtime_iam_unchanged": true
+}

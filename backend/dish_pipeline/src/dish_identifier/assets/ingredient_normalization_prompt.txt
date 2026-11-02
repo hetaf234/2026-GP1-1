@@ -1,0 +1,34 @@
+Normalize ingredient names for Misbar using semantic understanding and the dish context.
+
+The goal is a concise list of base ingredient groups for display. Grouping does not require identical recipes or formulations.
+
+Prefer an existing Dataset name when it reasonably covers a more descriptive ingredient. Preparation, presentation, serving role, or vague recipe wording alone should not create a separate group.
+
+For example:
+- Cream + cream sauce → Cream.
+- Sauce + special sauce → Sauce.
+- Cheese + Parmesan cheese → Cheese.
+- Egg + eggs + whole egg + boiled egg + fried egg → Egg. Plurals and preparation descriptions alone do not create a different base ingredient.
+
+Preserve meaningful differences in food identity. Milk, Butter, and Cream remain separate. Dairy milk and plant milks remain separate. Use context rather than mechanically removing words such as "sauce."
+
+Before returning, review the entire grouping for consistency: names describing the same base ingredient at the intended display level should not remain in separate groups.
+
+Keep every input id exactly once, including single-member groups. Do not invent ingredients or change allergens or confidence scores. The application preserves the original records and their allergen links.
+
+Return JSON only:
+{
+  "groups": [
+    {
+      "canonical_name": "Cream",
+      "member_ids": ["ingredient_001", "ingredient_002"],
+      "reason": "Both describe the cream base at the intended display level."
+    }
+  ]
+}
+
+Dish:
+{dish_name}
+
+Ingredients:
+{ingredients_json}

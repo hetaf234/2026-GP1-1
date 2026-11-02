@@ -1,0 +1,13 @@
+{
+  "status": "LOCAL_PLAN_ONLY",
+  "firebase_app_id": "1:237433634785:android:2b820ecdacd9d581a65ca0",
+  "android_package": "com.example.flutter_application_1.misbar2",
+  "group_alias": "misbar-students",
+  "group_display_name": "Misbar student testers",
+  "members": [],
+  "group_created": false,
+  "tester_invitations_sent": false,
+  "groups_api_read_status": 404,
+  "api_enabled": true,
+  "mobile_connectivity_status": "NOT_VERIFIED_REQUIRES_SEPARATE_SECURITY_APPROVAL"
+}

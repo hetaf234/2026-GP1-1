@@ -1,0 +1,7 @@
+{
+  "provider": "sightengine",
+  "model": "quality",
+  "threshold": 0.5,
+  "timeout_seconds": 30,
+  "request_interval_seconds": 1.05
+}

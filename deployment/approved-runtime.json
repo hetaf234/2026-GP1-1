@@ -1,0 +1,305 @@
+{
+  "schema_version": 2,
+  "repository_commit": "0cc855928791a41f6d0e7670d1750435a3e5d7cd",
+  "dish_commit": "c22855b0c50c339d1c57566248d6c05021695b37",
+  "dish_source_snapshot_sha256": "dd502adead8111a85740751f694e84ce6c8aa9be9a95bc7c588c8a0295748300",
+  "repository_worktree_dirty": true,
+  "registry_sha256": "74b458c7e698afb7c36fabd074a239bd24d3f467b95a42d71c2247acda2eda29",
+  "registry_revision": 1,
+  "label_model_revision": "e96cbd447883aaec60862640684a03169ce703b8",
+  "label_weights_fetch_at_build": false,
+  "user_allergy_matching_enabled": false,
+  "capabilities": {
+    "frozen_pipeline": {
+      "user_allergy_matching_enabled": false
+    },
+    "dish_endpoint": {
+      "personalization": "verified_uid_firestore",
+      "json": true,
+      "sse": true,
+      "sse_protocol": "progress_outcome_v1"
+    }
+  },
+  "files": {
+    "labels/main.py": {
+      "sha256": "7e3ab5f1b196e49abc84256a8416664e30b30a80d7ff77afcd20f5a8fb32a91f",
+      "bytes": 21039
+    },
+    "labels/allergen_matching_dataset_reviewed_rtl.csv": {
+      "sha256": "beb64e04dbc4bf380a1e309a89f6c44a714c4a1de750dc3b9b5beb1c1a7380b3",
+      "bytes": 9385
+    },
+    "labels/app/auth.py": {
+      "sha256": "970f0c376390b95179b4bae4e8d46abdeef5f4391a96ae61c214589f59b787e8",
+      "bytes": 4171
+    },
+    "labels/app/constants.py": {
+      "sha256": "be0b31964268e0770d895b6f13ad4fd9a43bde907649e338ede257768cc14835",
+      "bytes": 1399
+    },
+    "labels/app/error_safety.py": {
+      "sha256": "ff6784371ade45e6575cc0bf204cff24df4bc885ebedddb460249737c3d7e1da",
+      "bytes": 3993
+    },
+    "labels/app/log_safety.py": {
+      "sha256": "9a18fdfea4f8392acfaea039e32edcf4e468f1cd789f28950f08f1359162c3d1",
+      "bytes": 6531
+    },
+    "labels/app/models.py": {
+      "sha256": "2f2c7b48801f51c5742c8f25d4d3bcb07cbc55c23dfbaa2febbdc207741b89d4",
+      "bytes": 2919
+    },
+    "labels/app/services/__init__.py": {
+      "sha256": "c3f13c40ae919ef292bd4f3ae9e0def01091576eab026e1ddd1f98834e8e5825",
+      "bytes": 19
+    },
+    "labels/app/services/allergen_service.py": {
+      "sha256": "d939befa8dde8b6d3d3dd200bac74ceba82c0d150256887742328ff6bda82a51",
+      "bytes": 4121
+    },
+    "labels/app/services/dish_allergen_service.py": {
+      "sha256": "53c2c5b4ee1ab85da0a9d1de622d65b3c3342f90d95544ed78bdbc73a541b09f",
+      "bytes": 8902
+    },
+    "labels/app/services/dish_progress_service.py": {
+      "sha256": "2f97fffa8d5715674489d844790ab7cede0f4a361be4678ac2ecb80d6c607b42",
+      "bytes": 3969
+    },
+    "labels/app/services/ingredient_service.py": {
+      "sha256": "05222940dd44d2186d5607e885439457c3ce627263bee54e618d23fa4bb4f719",
+      "bytes": 2984
+    },
+    "labels/app/services/label_progress_service.py": {
+      "sha256": "445234dfb43b57e451c708b821fd70394f9c00286a642c47b82343a146fe9816",
+      "bytes": 8469
+    },
+    "labels/app/services/ocr_service.py": {
+      "sha256": "a0f8661101537fb89ed61530f38a62c6703ff9e007db6f8cb8ca6fe4516b1dee",
+      "bytes": 2185
+    },
+    "labels/app/services/quality_service.py": {
+      "sha256": "56f029b7dad459cd20cd05fe3d793d56bf772b3281b74bbf5774196bc8a5b852",
+      "bytes": 2863
+    },
+    "labels/app/services/user_allergen_service.py": {
+      "sha256": "d01abaef6e504464bdc87e8ffa914593161dda8e295cde33984a9885feb4dce3",
+      "bytes": 6732
+    },
+    "labels/app/services/user_metadata_service.py": {
+      "sha256": "10e54c31c7194d6e7af2201549d0f006df2407d5688bf100c02213da6a1372af",
+      "bytes": 1166
+    },
+    "dish/src/dish_identifier/__init__.py": {
+      "sha256": "8a4f74968cc1e2e30e0045c6d97656b30b50923d1a385de42bea0fd509059f97",
+      "bytes": 57
+    },
+    "dish/src/dish_identifier/assets/food_gate_prompt.txt": {
+      "sha256": "632bcef30e7502af49fb360d9197705a743c9b7ac2bbfc32ffd4de03f162ce73",
+      "bytes": 4127
+    },
+    "dish/src/dish_identifier/assets/food_gate_schema.json": {
+      "sha256": "fd413804a3553722da59b1a7bdfe1963a4d417bd144ea54f2645055569ad2485",
+      "bytes": 307
+    },
+    "dish/src/dish_identifier/assets/ingredient_normalization_prompt.txt": {
+      "sha256": "dc79cb28d6e39ee0f70e5a74ffece9b8ba07ce85e35ba864d9a02193a7fea67d",
+      "bytes": 1540
+    },
+    "dish/src/dish_identifier/assets/ingredient_normalization_schema_v1.json": {
+      "sha256": "4b602fdd7f30c35589bc1977add8f2af15e195c73a18f6eb13d2b9c4a2c89a33",
+      "bytes": 497
+    },
+    "dish/src/dish_identifier/assets/ingredient_prompt.txt": {
+      "sha256": "569378a3564e865ad675353bc53c348417f72930a451989439352b40e9227d5e",
+      "bytes": 1101
+    },
+    "dish/src/dish_identifier/assets/ingredient_schema.json": {
+      "sha256": "f325042fbac85ec8a35edbaaa90a31c41dd4e0cea1de45910d4040dbc6249277",
+      "bytes": 1192
+    },
+    "dish/src/dish_identifier/assets/manifest.json": {
+      "sha256": "bbc9e643bedac2d1ea140e68c83bb39dc9da155f4c61ec78e733b24dd35b131c",
+      "bytes": 1666
+    },
+    "dish/src/dish_identifier/claude_client.py": {
+      "sha256": "e34b9a1a4a624c78b787092573b3e2ec4a3aef07ca19dd6f61864ecdd1ea4876",
+      "bytes": 7844
+    },
+    "dish/src/dish_identifier/credentials.py": {
+      "sha256": "2c773191c12ecca1b92deb382f889698158b5c75ef0d46d75c2a43a00199bd8e",
+      "bytes": 4364
+    },
+    "dish/src/dish_identifier/dish_display.py": {
+      "sha256": "df0e1ce5fbb037dc80d4068d642cc94947385d4dfd9255e3343bba5c92c81147",
+      "bytes": 2331
+    },
+    "dish/src/dish_identifier/frozen_runtime.py": {
+      "sha256": "5ce8d5891850d62aa72617a27eb4db834804f4083642bd5cbe389358852aa997",
+      "bytes": 2894
+    },
+    "dish/src/dish_identifier/human_labels.py": {
+      "sha256": "8398f907bb22747a3e9857edd013e0f7aed22b8c07ddb948489daf7f185a5183",
+      "bytes": 5456
+    },
+    "dish/src/dish_identifier/image_quality.py": {
+      "sha256": "9c31302eff7918d97226ff7d8b1347d8de47ad01de094ab392841231030768b0",
+      "bytes": 10841
+    },
+    "dish/src/dish_identifier/ingredient_data.py": {
+      "sha256": "1b0ab612ce7f59a9257c2d0105bb831289c81ca4afae8682f6f7d9f4f13e75d4",
+      "bytes": 4935
+    },
+    "dish/src/dish_identifier/ingredient_normalization.py": {
+      "sha256": "f3b861b6389a5baf2a456b3e8ac727493bef8cae922f0cadf1fc30d3be84c61e",
+      "bytes": 5757
+    },
+    "dish/src/dish_identifier/pipeline.py": {
+      "sha256": "94bff878d6232ca44acbf1d49fca0d20dba67910fd7960567f0e34118a9d141f",
+      "bytes": 20861
+    },
+    "dish/src/dish_identifier/recipe_fusion.py": {
+      "sha256": "5c1587b4780883ca9047afefaf14c6dc31024c6945abcde3d1be91ebfbff8af4",
+      "bytes": 3972
+    },
+    "dish/nonlinear/FINAL_NONLINEAR_FUSION/config.json": {
+      "sha256": "f2ab3cdbb44e29112e5ce11900eff2bce070461719eb66f3189fb80ca5706f5c",
+      "bytes": 1815
+    },
+    "dish/nonlinear/FINAL_NONLINEAR_FUSION/fusion_model.json": {
+      "sha256": "e1bca89f15dc51c847ffce02a1d8f277c72befe8acdd1c2356006ba95b481dba",
+      "bytes": 709
+    },
+    "dish/nonlinear/implementation/detector.py": {
+      "sha256": "28db1abf30719e505cc4abb75471a9b84c9e62fca785384bd62298a124099266",
+      "bytes": 6035
+    },
+    "dish/nonlinear/shared/lr_model.json": {
+      "sha256": "7b8dac42015ebfe3a6863775dfaf930dab1adf537da9314c67f9daf3e147b533",
+      "bytes": 535
+    },
+    "dish/nonlinear/shared/oe_head.pt": {
+      "sha256": "131555d47e385b8dc546e08caaeaf1396922afa9bbebf99dee22d0f6f5ce3425",
+      "bytes": 376357
+    },
+    "dish/nonlinear/shared/preprocessing.json": {
+      "sha256": "5039d7df98609810c994ca9351b901afc9ee6a1ce9f6733d627964bcedfb9ce2",
+      "bytes": 734
+    },
+    "dish/nonlinear/shared/class_mapping.json": {
+      "sha256": "b776aa39babdcc80c7a482f837bfd467786d0e4fbd75677450b8ddc4688acb23",
+      "bytes": 4975
+    },
+    "dish/configs/pipeline.json": {
+      "sha256": "bdfa74599bda6da51364ae0d8ec3bb39230079d44ffe35c5da8dd5d60958e65c",
+      "bytes": 689
+    },
+    "dish/configs/image_quality.json": {
+      "sha256": "dea6798163c44a8e1b2d4344895f93e0e5b1b4934a5f3fb9a1f25ebdb95c426b",
+      "bytes": 135
+    },
+    "dish/Misbar_Normlized_IngredientsXAllergen.json": {
+      "sha256": "e93333fd351837902a476891df262634641a5733eae4f680e894525b963c32f5",
+      "bytes": 630837
+    },
+    "dish/misbar_dish_name_mapping.json": {
+      "sha256": "ce5b003edf76403d17494d5dfa3811c7bce3c93fa5ca47445136ed449a1c7606",
+      "bytes": 13562
+    },
+    "dish/data_governance/human_label_registry.json": {
+      "sha256": "74b458c7e698afb7c36fabd074a239bd24d3f467b95a42d71c2247acda2eda29",
+      "bytes": 256502
+    },
+    "dish/data_governance/active_references.json": {
+      "sha256": "47510b4588c7b013502eff6158daa98bacc7e50fc4c798f98b4535e092f866cc",
+      "bytes": 789
+    },
+    "dish/scripts/infer_final_food_v2_dinov2.py": {
+      "sha256": "f4f80471c121d020fb76021870f09e991c22d7e740cf363667d3cffacd5dd391",
+      "bytes": 10078
+    },
+    "dish/manual_testing/test_nonlinear.py": {
+      "sha256": "ec454751bc51728570b4076e68f02eb9f8337344f0f7f2d5e2780f2fc3255f33",
+      "bytes": 13767
+    },
+    "dish/models/best_checkpoint.pt": {
+      "sha256": "662b398c7e377cca59b984ede3c2d6460c70eef5d7c74beff3da57cda8c6c469",
+      "bytes": 1040301749
+    },
+    "labels/ingredient-detection/config.json": {
+      "sha256": "4b5daeda643d147fd578f1f9ae7d2ae2a2f6a8005132fc40edc3c55dc006c9d9",
+      "bytes": 854
+    },
+    "labels/ingredient-detection/model.safetensors": {
+      "sha256": "ca586acd223448c0aff78372639cd6203466e753c5becfda2df38bd98f18e378",
+      "bytes": 2235424156
+    },
+    "labels/ingredient-detection/tokenizer.json": {
+      "sha256": "70dc686438b64aca1ee6b60d1aed7f7cc93a432c73ec891b31d09a4758ee695d",
+      "bytes": 17082835
+    },
+    "labels/ingredient-detection/tokenizer_config.json": {
+      "sha256": "f90024142df07163e5e6c5b9a6ad7c8c68b22a9112af11e3db4559a9ff90f737",
+      "bytes": 1147
+    },
+    "labels/ingredient-detection/special_tokens_map.json": {
+      "sha256": "06e405a36dfe4b9604f484f6a1e619af1a7f7d09e34a8555eb0b77b66318067f",
+      "bytes": 280
+    },
+    "labels/ingredient-detection/download_manifest.json": {
+      "sha256": "d1a7ca76f4488054ba6e6598ac16bc4f249db171ee39da1d3a2d7973962410e6",
+      "bytes": 826
+    },
+    "labels/ingredient-detection/source_manifest.json": {
+      "sha256": "631182208e5f204edea63f5c7e6b45735bff23b89b12daab88e6297f3ceb528b",
+      "bytes": 1705
+    },
+    "deployment/__init__.py": {
+      "sha256": "55a9c085c3f67e8538b9b2e4c3f2aa7fefa657b616b5b03b537f92223a2ce0fc",
+      "bytes": 80
+    },
+    "deployment/dish_api.py": {
+      "sha256": "cc9b635272b654231a0794c29a11dd1c3860818e77fb8537f842d0a8ad8fc69b",
+      "bytes": 8399
+    },
+    "deployment/gateway.py": {
+      "sha256": "1aa2a867e86bd172de0ed7a83e310c68a2dd541e1fa965fa76adeb38b37e7790",
+      "bytes": 3627
+    },
+    "deployment/serve.py": {
+      "sha256": "77fa44d923e5bc569f467258b9c36823101f442e6666e43f85c3c52cc44501ee",
+      "bytes": 845
+    },
+    "deployment/fetch_label_model.py": {
+      "sha256": "4f165d702511f0a1a7c3041c2247197dd729b3a62900d951bb7eb3e01546db6f",
+      "bytes": 6855
+    },
+    "deployment/materialize_label_model.py": {
+      "sha256": "5f77dae098458efc5848e00fe3712ffba49020c25d056026d6269d3f8cf946f7",
+      "bytes": 971
+    },
+    "deployment/verify_bundle.py": {
+      "sha256": "0432f1f03c4052bf82251d80cec665c661ae5b3ce9b65ec42bc0e4cd4d7431cd",
+      "bytes": 2932
+    },
+    "deployment/benchmark_models.py": {
+      "sha256": "3469ca2571668e117f0cf8bffc5d943ed79089b999684833a5040744599a8d2a",
+      "bytes": 4674
+    },
+    "deployment/requirements.txt": {
+      "sha256": "e6e3e82986c8395465e87a8537960bdad641e9c03607ca26e32f254a9fb5d0f9",
+      "bytes": 422
+    },
+    "deployment/requirements.lock.txt": {
+      "sha256": "358a712ecbbb475dfdf2201c19a6e0118545508a3467051adfefef9a449f4cfe",
+      "bytes": 1499
+    },
+    "Dockerfile": {
+      "sha256": "81a639ef2755dcf97cafe0575f0ae725b4e96c118bfcf08552c415eeadfa03c8",
+      "bytes": 1723
+    },
+    ".dockerignore": {
+      "sha256": "3fcb9977a1cac6b94619a16144062d4051868e6f66857d30d5224d5407474726",
+      "bytes": 210
+    }
+  }
+}

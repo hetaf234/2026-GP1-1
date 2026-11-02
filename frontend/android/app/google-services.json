@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "237433634785",
+    "project_id": "misbar-ebea2",
+    "storage_bucket": "misbar-ebea2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:237433634785:android:a12cdc715c15fcdca65ca0",
+        "android_client_info": {
+          "package_name": "com.example.flutter_application_1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAdfe1xW2gUfARtYpczL1pGMwAC6UtoZ78"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

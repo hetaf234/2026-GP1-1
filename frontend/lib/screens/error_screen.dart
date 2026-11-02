@@ -1,0 +1,240 @@
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+import '../theme/app_colors.dart';
+import '../widgets/app_header.dart';
+import '../services/allergen_scanner_service.dart';
+import '../services/allergy_service.dart';
+import '../features/dish_scan/dish_widgets.dart';
+import 'scanning_screen.dart';
+import 'image_capture_screen.dart';
+
+enum ErrorType { labelUnreadable, connectionError, imageBlurry }
+
+class ErrorScreen extends StatelessWidget {
+  final ErrorType type;
+  final Uint8List imageBytes;
+  final List<String> userAllergens;
+  final String? userId;
+  final AllergenScannerService scannerService;
+  final String? customTitle;
+  final String? customMessage;
+
+  static const MethodChannel _channel = MethodChannel(
+    'com.example.misbar/image_capture',
+  );
+
+  const ErrorScreen({
+    super.key,
+    required this.type,
+    required this.imageBytes,
+    required this.userAllergens,
+    this.userId,
+    required this.scannerService,
+    this.customTitle,
+    this.customMessage,
+  });
+
+  Future<void> _handleRetry(BuildContext context) async {
+    final activeAllergens = AllergyService().currentAllergies ?? userAllergens;
+
+    if (type == ErrorType.connectionError) {
+      // Re-send the same in-memory image without retaking
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => ScanningScreen(
+            imageBytes: imageBytes,
+            userId: userId,
+            userAllergens: activeAllergens,
+            scannerService: scannerService,
+          ),
+        ),
+      );
+    } else {
+      // Re-open camera to take a clearer picture
+      try {
+        final String? tempPath = await _channel.invokeMethod<String>(
+          'openImageCapture',
+          {'header': AppHeader.nativeAppearance(context)},
+        );
+
+        if (tempPath != null && tempPath.isNotEmpty) {
+          final file = File(tempPath);
+          if (await file.exists()) {
+            final bytes = await file.readAsBytes();
+            try {
+              await file.delete();
+            } catch (_) {}
+
+            if (!context.mounted) return;
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (_) => ScanningScreen(
+                  imageBytes: bytes,
+                  userId: userId,
+                  userAllergens: activeAllergens,
+                  scannerService: scannerService,
+                ),
+              ),
+            );
+            return;
+          }
+        }
+      } catch (_) {}
+
+      if (!context.mounted) return;
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => ImageCaptureScreen(
+            userId: userId,
+            userAllergens: activeAllergens,
+            scannerService: scannerService,
+          ),
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isUnreadable = type == ErrorType.labelUnreadable;
+    final isBlurry = type == ErrorType.imageBlurry;
+    final isConnection = type == ErrorType.connectionError;
+
+    final IconData iconData = isBlurry
+        ? Icons.blur_on
+        : (isUnreadable ? Icons.local_offer_outlined : Icons.wifi_off);
+
+    final Color badgeBg = isConnection
+        ? AppColors.alertBg
+        : AppColors.tagBeigeBg;
+    final Color iconColor = isConnection
+        ? AppColors.alertSoftRed
+        : AppColors.tagOrange;
+
+    final String titleText =
+        customTitle ??
+        (isBlurry
+            ? 'Image Not Clear'
+            : (isUnreadable ? 'Label Could Not Be Read' : 'Connection Error'));
+
+    final String subtitleText =
+        customMessage ??
+        (isBlurry
+            ? 'The image is too blurry to reliably detect ingredients. Please retake the label photo in good lighting and keep the camera steady.'
+            : (isUnreadable
+                  ? 'Ensure even lighting, move closer to the text and keep your camera steady.'
+                  : 'Unable to complete the scan. Please check your connection and try again.'));
+
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: SafeArea(
+        child: Column(
+          children: [
+            AppHeader(onBack: () => Navigator.of(context).pop()),
+            Expanded(
+              child: LayoutBuilder(
+                builder: (context, constraints) => SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
+                    child: IntrinsicHeight(
+                      child: Column(
+                        children: [
+                          const Spacer(),
+
+                          // Centered Circular Icon Badge
+                          Container(
+                            width: 80,
+                            height: 80,
+                            decoration: BoxDecoration(
+                              color: badgeBg,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(iconData, size: 36, color: iconColor),
+                          ),
+                          const SizedBox(height: 24),
+
+                          // Title
+                          Text(
+                            titleText,
+                            style: const TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textDark,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+
+                          // Subtitle
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 40),
+                            child: Text(
+                              subtitleText,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                height: 1.4,
+                                color: AppColors.textMuted,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 32),
+
+                          // Primary Try Again Button
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 24),
+                            child: SizedBox(
+                              width: double.infinity,
+                              height: 52,
+                              child: ElevatedButton(
+                                onPressed: () => _handleRetry(context),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.primaryGreen,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  elevation: 0,
+                                ),
+                                child: const Text(
+                                  'Try Again',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+
+                          // Back to Home
+                          TextButton(
+                            onPressed: () => returnToScanHome(context),
+                            child: const Text(
+                              'Back to Home',
+                              style: TextStyle(
+                                color: AppColors.primaryGreen,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+
+                          const Spacer(),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

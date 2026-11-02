@@ -1,0 +1,50 @@
+{
+  "candidate": "FINAL_NONLINEAR_FUSION",
+  "kind": "NONLINEAR",
+  "schema_version": 1,
+  "components": {
+    "lr": {
+      "path": "../shared/lr_model.json",
+      "sha256": "7b8dac42015ebfe3a6863775dfaf930dab1adf537da9314c67f9daf3e147b533"
+    },
+    "oe": {
+      "path": "../shared/oe_head.pt",
+      "sha256": "131555d47e385b8dc546e08caaeaf1396922afa9bbebf99dee22d0f6f5ce3425"
+    },
+    "class_mapping": {
+      "path": "../shared/class_mapping.json",
+      "sha256": "b776aa39babdcc80c7a482f837bfd467786d0e4fbd75677450b8ddc4688acb23"
+    },
+    "preprocessing": {
+      "path": "../shared/preprocessing.json",
+      "sha256": "5039d7df98609810c994ca9351b901afc9ee6a1ce9f6733d627964bcedfb9ce2"
+    },
+    "fusion": {
+      "path": "fusion_model.json",
+      "sha256": "e1bca89f15dc51c847ffce02a1d8f277c72befe8acdd1c2356006ba95b481dba"
+    }
+  },
+  "threshold": 0.18922570362206778,
+  "target_supported_retention": 0.95,
+  "score_direction": "higher supportedness",
+  "comparison": ">=",
+  "original_classifier": {
+    "checkpoint": "models/best_checkpoint.pt",
+    "checkpoint_sha256": "662b398c7e377cca59b984ede3c2d6460c70eef5d7c74beff3da57cda8c6c469",
+    "loader": "scripts/infer_final_food_v2_dinov2.py",
+    "loader_sha256": "f4f80471c121d020fb76021870f09e991c22d7e740cf363667d3cffacd5dd391"
+  },
+  "feature_contract": "shared/preprocessing.json",
+  "class_count": 121,
+  "embedding_dim": 768,
+  "calibration_images": 726,
+  "calibration_accepted": 690,
+  "calibration_rejected": 36,
+  "calibration_retention": 0.9504132231404959,
+  "calibrated_at": "2026-10-10T12:08:08.019708+03:00",
+  "threshold_rule": "690th descending score, index 689; accept ties; ceil(.95*726)",
+  "immutable_after_test_authorization": true,
+  "final_test_has_not_been_opened": true,
+  "inference_cpu_threads": 8,
+  "C": 10.0
+}
