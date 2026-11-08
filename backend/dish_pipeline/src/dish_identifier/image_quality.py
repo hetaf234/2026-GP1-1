@@ -10,16 +10,14 @@ import io
 import json
 import math
 from pathlib import Path
-import socket
 import ssl
 import time
-from urllib.error import HTTPError, URLError
-from urllib.request import Request, urlopen
-import uuid
 import warnings
 
-from PIL import Image, UnidentifiedImageError
 import certifi
+from PIL import Image, UnidentifiedImageError
+import requests
+from urllib3.exceptions import NameResolutionError, ReadTimeoutError
 
 ENDPOINT = "https://api.sightengine.com/1.0/check.json"
 
@@ -98,29 +96,29 @@ def evaluate_response(payload: dict, threshold: float = 0.5, http_status=200):
     _number(threshold, "threshold", maximum=1)
     if not isinstance(payload, dict):
         return QualityResult("error", None, threshold, "invalid_response",
-                             "تعذّر قراءة نتيجة فحص الجودة.", http_status=http_status)
+                             "Could not read the image-quality result.", http_status=http_status)
     if http_status != 200 or payload.get("status") != "success":
         error = payload.get("error")
         error_type = error.get("type") if isinstance(error, dict) else None
         reason = "credentials_error" if error_type == "credentials_error" else (
             "rate_limit" if http_status == 429 else "service_error"
         )
-        message = "تحققي من معرّف API والمفتاح السري." if reason == "credentials_error" else (
-            "بلغ الطلب حد الخدمة. حاولي لاحقًا." if reason == "rate_limit" else
-            "تعذّر فحص الصورة بالخدمة. حاولي مرة أخرى."
+        message = "The image-quality service could not authenticate." if reason == "credentials_error" else (
+            "The image-quality service reached its request limit." if reason == "rate_limit" else
+            "The image-quality service could not complete the check."
         )
         return QualityResult("error", None, threshold, reason, message, payload, http_status)
     try:
         score = _number(payload["quality"]["score"], "quality score", maximum=1)
     except (KeyError, TypeError, ValueError):
         return QualityResult("error", None, threshold, "invalid_response",
-                             "لم ترجع الخدمة درجة جودة صالحة.", payload, http_status)
+                             "The service did not return a valid quality score.", payload, http_status)
     accepted = score >= threshold
     return QualityResult(
         "accepted" if accepted else "rejected", score, threshold,
         "quality_passed" if accepted else "low_quality",
-        "اجتازت الصورة فحص الجودة؛ فحص الطعام لم يُربط بعد." if accepted else
-        "جودة الصورة غير كافية. ارفعي صورة أوضح.", payload, http_status,
+        "The image passed the quality check." if accepted else
+        "Image quality is below the acceptance threshold.", payload, http_status,
     )
 
 
@@ -158,7 +156,7 @@ class SightengineQualityGate:
                 value = value.replace(credential, "[REDACTED]")
         return value
 
-    def check(self, image_bytes: bytes):
+    def check(self, image_bytes: bytes) -> QualityResult:
         """Upload the original bytes once; invalid images and outages never pass."""
         try:
             with warnings.catch_warnings():
@@ -168,61 +166,60 @@ class SightengineQualityGate:
                     image.verify()
                 with Image.open(io.BytesIO(image_bytes)) as image:
                     image.load()
-            # These formats are supported by this initial integration, without conversion.
             content_types = {"JPEG": "image/jpeg", "PNG": "image/png", "WEBP": "image/webp"}
             if image_format not in content_types:
-                return self._error("unsupported_format", "استخدمي صورة JPEG أو PNG أو WebP.")
+                return self._error("unsupported_format", "Use a JPEG, PNG, or WebP image.")
         except (UnidentifiedImageError, OSError, ValueError, SyntaxError,
                 Image.DecompressionBombError, Image.DecompressionBombWarning):
-            return self._error("invalid_image", "تعذّر قراءة ملف الصورة؛ اختاري ملفًا صالحًا.")
+            return self._error("invalid_image", "Could not read the image file.")
 
-        boundary = "misbar-" + uuid.uuid4().hex
-        body = bytearray()
-        for name, value in (("models", "quality"), ("api_user", self.api_user), ("api_secret", self.api_secret)):
-            body.extend(f'--{boundary}\r\nContent-Disposition: form-data; name="{name}"\r\n\r\n'.encode())
-            body.extend(value.encode("utf-8") + b"\r\n")
-        body.extend((f'--{boundary}\r\nContent-Disposition: form-data; name="media"; filename="image"\r\n'
-                     f'Content-Type: {content_types[image_format]}\r\n\r\n').encode())
-        body.extend(image_bytes)
-        body.extend(f"\r\n--{boundary}--\r\n".encode())
-        request = Request(ENDPOINT, data=bytes(body), method="POST", headers={
-            "Content-Type": f"multipart/form-data; boundary={boundary}",
-            "Accept": "application/json",
-        })
         if self._last_request is not None:
             delay = self.config.request_interval_seconds - (time.monotonic() - self._last_request)
             if delay > 0:
                 time.sleep(delay)
         self._last_request = time.monotonic()
-        status = 200
+        return self._request_quality(image_bytes, content_types[image_format])
+
+    def _request_quality(self, image_bytes: bytes, content_type: str) -> QualityResult:
         try:
-            try:
-                with urlopen(request, timeout=self.config.timeout_seconds, context=https_context()) as response:
-                    status = response.status
-                    raw = response.read()
-            except HTTPError as error:
-                with error:
-                    status = error.code
-                    raw = error.read()
-            payload = self._redact(json.loads(raw, parse_float=_json_float, parse_constant=_reject_json_constant))
-        except (socket.timeout, TimeoutError):
-            return self._error("timeout", "انتهت مهلة فحص الصورة. حاولي مرة أخرى.")
-        except ssl.SSLCertVerificationError:
-            return self._error("tls_error", "تعذّر التحقق من شهادة الاتصال الآمن بخدمة الجودة.")
-        except URLError as error:
-            if isinstance(error.reason, ssl.SSLCertVerificationError):
-                return self._error("tls_error", "تعذّر التحقق من شهادة الاتصال الآمن بخدمة الجودة.")
-            if isinstance(error.reason, (socket.timeout, TimeoutError)):
-                return self._error("timeout", "انتهت مهلة فحص الصورة. حاولي مرة أخرى.")
-            if isinstance(error.reason, socket.gaierror):
-                return self._error("dns_error", "تعذّر الوصول لعنوان الخدمة. تحققي من اتصال الإنترنت.")
-            return self._error("network_error", "تعذّر الاتصال بخدمة فحص الجودة. حاولي مرة أخرى.")
-        except OSError:
-            return self._error("network_error", "تعذّر الاتصال بخدمة فحص الجودة. حاولي مرة أخرى.")
-        except (ValueError, UnicodeError):
-            return self._error("rate_limit" if status == 429 else "invalid_response",
-                               "تعذّر قراءة رد الخدمة. حاولي لاحقًا.", status)
-        return evaluate_response(payload, self.config.threshold, status)
+            response = requests.post(
+                ENDPOINT,
+                data={
+                    "models": "quality",
+                    "api_user": self.api_user,
+                    "api_secret": self.api_secret,
+                },
+                files={"media": ("image", image_bytes, content_type)},
+                headers={"Accept": "application/json"},
+                timeout=self.config.timeout_seconds,
+                verify=certifi.where(),
+                allow_redirects=False,
+            )
+        except requests.exceptions.SSLError:
+            return self._error("tls_error", "Could not establish a secure connection to the image-quality service.")
+        except requests.RequestException as error:
+            # Requests can wrap a response-body timeout or DNS failure in a ConnectionError.
+            cause = error.args[0] if error.args else None
+            if isinstance(error, requests.Timeout) or isinstance(cause, ReadTimeoutError):
+                return self._error("timeout", "The image-quality check timed out.")
+            if isinstance(getattr(cause, "reason", None), NameResolutionError):
+                return self._error("dns_error", "Could not resolve the image-quality service address.")
+            return self._error("network_error", "Could not connect to the image-quality service.")
+
+        http_status = response.status_code
+        try:
+            payload = json.loads(
+                response.content,
+                parse_float=_json_float,
+                parse_constant=_reject_json_constant,
+            )
+        except ValueError:
+            return self._error(
+                "rate_limit" if http_status == 429 else "invalid_response",
+                "Could not read the image-quality service response.",
+                http_status,
+            )
+        return evaluate_response(self._redact(payload), self.config.threshold, http_status)
 
     def _error(self, reason, message, status=None):
         return QualityResult("error", None, self.config.threshold, reason, message, http_status=status)
