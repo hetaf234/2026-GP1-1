@@ -10,7 +10,6 @@ import '../services/allergy_service.dart';
 import '../services/auth_service.dart';
 import '../services/api_service.dart';
 import '../models/scan_result.dart';
-import 'scanning_screen.dart';
 import 'image_capture_screen.dart';
 import 'welcome_screen.dart';
 import '../features/dish_scan/dish_home_screen.dart';
@@ -432,8 +431,9 @@ class _AllergySelectionScreenState extends State<AllergySelectionScreen> {
           Navigator.of(context)
               .push(
                 MaterialPageRoute(
-                  builder: (_) => ScanningScreen(
-                    imageBytes: bytes,
+                  builder: (_) => ImageCaptureScreen(
+                    initialImageBytes: bytes,
+                    useNativeCapture: true,
                     userId: _authService.currentUser?.uid,
                     userAllergens: latestAllergens,
                     scannerService: _scannerService,

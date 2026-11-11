@@ -21,10 +21,10 @@ class LabelScanHttpClient {
     required this.baseUrl,
     required this.tokenProvider,
     required this.currentUid,
-    // Whole-request deadline: Cloud Run allows 600 seconds, plus 60 seconds
-    // for token retrieval, upload and stream completion. Heartbeats do not
+    // Whole-request deadline: 180 seconds for token retrieval, upload and
+    // stream completion, matching the dish default. Heartbeats do not
     // restart this deadline; cancellation still aborts the single request.
-    this.timeout = const Duration(minutes: 11),
+    this.timeout = const Duration(seconds: 180),
   });
 
   Future<ScanResult> analyze(

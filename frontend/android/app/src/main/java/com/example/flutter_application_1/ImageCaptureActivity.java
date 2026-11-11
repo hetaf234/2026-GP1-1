@@ -39,11 +39,13 @@ import org.json.JSONObject;
 
 public class ImageCaptureActivity extends AppCompatActivity {
     public static final String EXTRA_IMAGE_PATH = "image_path";
+    public static final String EXTRA_SOURCE = "source";
     public static final String EXTRA_HEADER_APPEARANCE = "header_appearance";
     public static final String EXTRA_STATUS_BAR_COLOR = "status_bar_color";
     public static final String EXTRA_LIGHT_STATUS_BAR = "light_status_bar";
 
     private JSONObject headerAppearance;
+    private boolean directSelection;
 
     private Uri tempCameraUri;
     private String tempCameraPath;
@@ -54,6 +56,7 @@ public class ImageCaptureActivity extends AppCompatActivity {
                 returnSuccess(tempCameraPath);
             } else {
                 cleanupTempCameraFile();
+                cancelDirectSelection();
             }
         });
 
@@ -61,6 +64,8 @@ public class ImageCaptureActivity extends AppCompatActivity {
         registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
             if (uri != null) {
                 copySelectedImageToCache(uri);
+            } else {
+                cancelDirectSelection();
             }
         });
 
@@ -70,6 +75,7 @@ public class ImageCaptureActivity extends AppCompatActivity {
                 launchCamera();
             } else {
                 Toast.makeText(this, "Camera permission is required to take photos", Toast.LENGTH_SHORT).show();
+                cancelDirectSelection();
             }
         });
 
@@ -77,6 +83,8 @@ public class ImageCaptureActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_capture);
+        String source = getIntent().getStringExtra(EXTRA_SOURCE);
+        directSelection = "camera".equals(source) || "gallery".equals(source);
 
         // Use AppHeader's design contract for this native view as well.
         try {
@@ -119,9 +127,22 @@ public class ImageCaptureActivity extends AppCompatActivity {
             pickImageLauncher.launch("image/*");
         });
 
-        findViewById(R.id.btn_flash).setOnClickListener(v -> {
-            Toast.makeText(this, "Flash toggled", Toast.LENGTH_SHORT).show();
-        });
+        // Preview actions use the existing camera/gallery launchers directly.
+        // Calls without a source retain the original native capture chooser.
+        if (savedInstanceState == null) {
+            if ("camera".equals(source)) {
+                findViewById(R.id.btn_capture).performClick();
+            } else if ("gallery".equals(source)) {
+                findViewById(R.id.btn_upload_image).performClick();
+            }
+        }
+    }
+
+    private void cancelDirectSelection() {
+        if (directSelection) {
+            setResult(RESULT_CANCELED);
+            finish();
+        }
     }
 
     @Override
@@ -271,6 +292,7 @@ public class ImageCaptureActivity extends AppCompatActivity {
             takePictureLauncher.launch(tempCameraUri);
         } catch (Exception e) {
             Toast.makeText(this, "Failed to initialize camera: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            cancelDirectSelection();
         }
     }
 
@@ -290,6 +312,7 @@ public class ImageCaptureActivity extends AppCompatActivity {
             returnSuccess(targetFile.getAbsolutePath());
         } catch (Exception e) {
             Toast.makeText(this, "Failed to load selected photo", Toast.LENGTH_SHORT).show();
+            cancelDirectSelection();
         }
     }
 

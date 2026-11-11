@@ -28,6 +28,8 @@ public class MainActivity extends FlutterActivity {
                     }
                     pendingResult = result;
                     Intent intent = new Intent(this, ImageCaptureActivity.class);
+                    String source = call.argument("source");
+                    intent.putExtra(ImageCaptureActivity.EXTRA_SOURCE, source);
                     intent.putExtra(ImageCaptureActivity.EXTRA_HEADER_APPEARANCE,
                         new JSONObject(header).toString());
                     intent.putExtra(ImageCaptureActivity.EXTRA_STATUS_BAR_COLOR,

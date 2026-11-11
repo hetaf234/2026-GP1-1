@@ -134,7 +134,7 @@ void main() {
   });
 
   test(
-    'default total deadline covers Cloud Run 600 seconds plus transport grace',
+    'default total deadline is 180 seconds',
     () {
       final client = LabelClient((_) async => reply(''));
       expect(
@@ -144,13 +144,13 @@ void main() {
           tokenProvider: () async => 'x',
           currentUid: () => uid,
         ).timeout,
-        const Duration(minutes: 11),
+        const Duration(seconds: 180),
       );
     },
   );
 
   testWidgets(
-    'a legitimate stream survives 25 seconds and the full server budget',
+    'a legitimate stream can complete just before the 180-second deadline',
     (tester) async {
       final controller = StreamController<List<int>>();
       final client = LabelClient(
@@ -181,16 +181,15 @@ void main() {
       final frames = labelProgressFrames();
       controller.add(utf8.encode(frames.take(2).join()));
       await tester.pump();
-      for (var i = 0; i < 40; i++) {
+      for (var i = 0; i < 11; i++) {
         controller.add(utf8.encode(': keep-alive\n\n'));
         await tester.pump(const Duration(seconds: 15));
         expect(failure, isNull);
         expect(succeeded, isFalse);
         expect(updates, hasLength(2));
       }
-      // A small transport/EOF delay beyond the server's 600-second budget is
-      // covered without extending the backend's own limit or resubmitting.
-      await tester.pump(const Duration(seconds: 10));
+      // Progress and heartbeats leave the original total deadline unchanged.
+      await tester.pump(const Duration(milliseconds: 14999));
       controller.add(
         utf8.encode(
           '${frames.skip(2).join()}${labelOutcome(LifecycleHttpClient.scanBody)}',
@@ -235,10 +234,15 @@ void main() {
                 },
               );
       await tester.pump();
-      for (var i = 0; i < 44; i++) {
+      for (var i = 0; i < 11; i++) {
         controller.add(utf8.encode(': keep-alive\n\n'));
         await tester.pump(const Duration(seconds: 15));
+        expect(failure, isNull);
       }
+      await tester.pump(const Duration(milliseconds: 14999));
+      expect(failure, isNull);
+      controller.add(utf8.encode(': keep-alive\n\n'));
+      await tester.pump(const Duration(milliseconds: 1));
       await finished;
       expect(
         failure,

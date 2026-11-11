@@ -71,8 +71,9 @@ class ErrorScreen extends StatelessWidget {
             if (!context.mounted) return;
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(
-                builder: (_) => ScanningScreen(
-                  imageBytes: bytes,
+                builder: (_) => ImageCaptureScreen(
+                  initialImageBytes: bytes,
+                  useNativeCapture: true,
                   userId: userId,
                   userAllergens: activeAllergens,
                   scannerService: scannerService,

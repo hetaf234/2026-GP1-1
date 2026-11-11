@@ -13,7 +13,6 @@ import '../features/dish_scan/dish_widgets.dart';
 import '../models/scan_result.dart';
 import '../services/allergen_scanner_service.dart';
 import '../services/allergy_service.dart';
-import 'scanning_screen.dart';
 import 'image_capture_screen.dart';
 
 class ScanResultScreen extends StatelessWidget {
@@ -62,8 +61,9 @@ class ScanResultScreen extends StatelessWidget {
           if (!context.mounted) return;
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              builder: (_) => ScanningScreen(
-                imageBytes: bytes,
+              builder: (_) => ImageCaptureScreen(
+                initialImageBytes: bytes,
+                useNativeCapture: true,
                 userId: userId,
                 userAllergens: activeAllergens,
                 scannerService: scannerService,
