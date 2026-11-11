@@ -71,16 +71,6 @@ class _ScanningScreenState extends State<ScanningScreen> {
             ? ErrorType.imageBlurry
             : ErrorType.labelUnreadable;
 
-        String? title;
-        if (result.isLowQuality && result.errorTitle != null) {
-          title = result.errorTitle!.split('/')[0].trim();
-        }
-
-        String? message;
-        if (result.isLowQuality && result.message != null) {
-          message = result.message!.split('/')[0].trim();
-        }
-
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (_) => ErrorScreen(
@@ -89,8 +79,6 @@ class _ScanningScreenState extends State<ScanningScreen> {
               userId: widget.userId,
               userAllergens: widget.userAllergens,
               scannerService: widget.scannerService,
-              customTitle: title,
-              customMessage: message,
             ),
           ),
         );
@@ -122,10 +110,6 @@ class _ScanningScreenState extends State<ScanningScreen> {
             userId: widget.userId,
             userAllergens: widget.userAllergens,
             scannerService: widget.scannerService,
-            customTitle: lowQuality ? 'Image Not Clear' : null,
-            customMessage: lowQuality
-                ? 'Please retake the label photo in good lighting and keep the camera steady.'
-                : null,
           ),
         ),
       );

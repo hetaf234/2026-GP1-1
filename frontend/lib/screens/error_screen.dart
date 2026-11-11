@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 
 import '../theme/app_colors.dart';
 import '../widgets/app_header.dart';
+import '../widgets/scan_error_page.dart';
 import '../services/allergen_scanner_service.dart';
 import '../services/allergy_service.dart';
 import '../features/dish_scan/dish_widgets.dart';
@@ -19,8 +20,6 @@ class ErrorScreen extends StatelessWidget {
   final List<String> userAllergens;
   final String? userId;
   final AllergenScannerService scannerService;
-  final String? customTitle;
-  final String? customMessage;
 
   static const MethodChannel _channel = MethodChannel(
     'com.example.misbar/image_capture',
@@ -33,8 +32,6 @@ class ErrorScreen extends StatelessWidget {
     required this.userAllergens,
     this.userId,
     required this.scannerService,
-    this.customTitle,
-    this.customMessage,
   });
 
   Future<void> _handleRetry(BuildContext context) async {
@@ -100,34 +97,30 @@ class ErrorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (type == ErrorType.imageBlurry) {
+      final (title, message, icon) = lowImageQualityError;
+      return ScanErrorPage(
+        title: title,
+        message: message,
+        icon: icon,
+        actionLabel: 'Choose Another Photo',
+        onAction: () => _handleRetry(context),
+        onBack: () => Navigator.of(context).pop(),
+      );
+    }
+
     final isUnreadable = type == ErrorType.labelUnreadable;
-    final isBlurry = type == ErrorType.imageBlurry;
-    final isConnection = type == ErrorType.connectionError;
-
-    final IconData iconData = isBlurry
-        ? Icons.blur_on
-        : (isUnreadable ? Icons.local_offer_outlined : Icons.wifi_off);
-
-    final Color badgeBg = isConnection
-        ? AppColors.alertBg
-        : AppColors.tagBeigeBg;
-    final Color iconColor = isConnection
-        ? AppColors.alertSoftRed
-        : AppColors.tagOrange;
-
-    final String titleText =
-        customTitle ??
-        (isBlurry
-            ? 'Image Not Clear'
-            : (isUnreadable ? 'Label Could Not Be Read' : 'Connection Error'));
-
-    final String subtitleText =
-        customMessage ??
-        (isBlurry
-            ? 'The image is too blurry to reliably detect ingredients. Please retake the label photo in good lighting and keep the camera steady.'
-            : (isUnreadable
-                  ? 'Ensure even lighting, move closer to the text and keep your camera steady.'
-                  : 'Unable to complete the scan. Please check your connection and try again.'));
+    final iconData = isUnreadable ? Icons.local_offer_outlined : Icons.wifi_off;
+    final badgeBg = isUnreadable ? AppColors.tagBeigeBg : AppColors.alertBg;
+    final iconColor = isUnreadable
+        ? AppColors.tagOrange
+        : AppColors.alertSoftRed;
+    final titleText = isUnreadable
+        ? 'Label Could Not Be Read'
+        : 'Connection Error';
+    final subtitleText = isUnreadable
+        ? 'Ensure even lighting, move closer to the text and keep your camera steady.'
+        : 'Unable to complete the scan. Please check your connection and try again.';
 
     return Scaffold(
       backgroundColor: AppColors.background,
