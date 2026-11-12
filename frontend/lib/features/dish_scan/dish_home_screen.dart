@@ -143,14 +143,18 @@ class DishHomeScreen extends StatelessWidget {
                         _ScanMethodCard(
                           title: 'Scan Dish',
                           subtitle: 'Check a dish against your allergies',
-                          icon: Icons.restaurant_outlined,
+                          icon: const DishPlateIcon(),
                           onTap: () => _openDish(context),
                         ),
                         const SizedBox(height: 14),
                         _ScanMethodCard(
                           title: 'Scan Packaged Food Label',
                           subtitle: 'Read ingredient lists on packaging',
-                          icon: Icons.local_offer_outlined,
+                          icon: const Icon(
+                            Icons.local_offer_outlined,
+                            color: AppColors.primaryGreen,
+                            size: 25,
+                          ),
                           onTap: onScanLabel,
                         ),
                         if (preview && previewControls != null) ...[
@@ -201,7 +205,7 @@ class DishHomeScreen extends StatelessWidget {
 class _ScanMethodCard extends StatelessWidget {
   final String title;
   final String subtitle;
-  final IconData icon;
+  final Widget icon;
   final VoidCallback onTap;
   const _ScanMethodCard({
     required this.title,
@@ -221,12 +225,14 @@ class _ScanMethodCard extends StatelessWidget {
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(14),
+              width: 53,
+              height: 53,
+              alignment: Alignment.center,
               decoration: BoxDecoration(
                 color: AppColors.sageBg,
                 borderRadius: BorderRadius.circular(17),
               ),
-              child: Icon(icon, color: AppColors.primaryGreen, size: 25),
+              child: icon,
             ),
             const SizedBox(width: 14),
             Expanded(

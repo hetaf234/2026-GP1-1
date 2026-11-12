@@ -659,7 +659,7 @@ void main() {
             DishScanFailure.lowQuality =>
               'Image quality is insufficient. Please retake the photo.',
             DishScanFailure.notSingleDish =>
-              'Please capture one food dish only.',
+              'Please capture a photo that shows only one dish.',
             DishScanFailure.unsupportedDish =>
               'This dish is currently not supported.',
             DishScanFailure.connection => 'Unable to complete the scan. Please check your connection and try again.',

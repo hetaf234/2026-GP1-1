@@ -7,13 +7,13 @@ import 'app_header.dart';
 const lowImageQualityError = (
   'Low Image Quality',
   'Image quality is insufficient. Please retake the photo.',
-  Icons.blur_on,
+  Icon(Icons.blur_on),
 );
 
 class ScanErrorPage extends StatelessWidget {
   final String title;
   final String message;
-  final IconData icon;
+  final Widget icon;
   final String actionLabel;
   final VoidCallback onAction;
   final VoidCallback onBack;
@@ -55,10 +55,12 @@ class ScanErrorPage extends StatelessWidget {
                             color: AppColors.tagBeigeBg,
                             shape: BoxShape.circle,
                           ),
-                          child: Icon(
-                            icon,
-                            color: AppColors.tagOrange,
-                            size: 40,
+                          child: IconTheme.merge(
+                            data: const IconThemeData(
+                              color: AppColors.tagOrange,
+                              size: 40,
+                            ),
+                            child: icon,
                           ),
                         ),
                         const SizedBox(height: 26),

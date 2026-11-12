@@ -127,11 +127,7 @@ class _DishScanningScreenState extends State<DishScanningScreen> {
                             color: AppColors.sageBg,
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(
-                            Icons.qr_code_scanner,
-                            color: AppColors.primaryGreen,
-                            size: 36,
-                          ),
+                          child: const Center(child: DishPlateIcon()),
                         ),
                         const SizedBox(height: 26),
                         const Text(

@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 
+import '../../theme/app_colors.dart';
 import '../../widgets/scan_error_page.dart';
 import 'dish_capture_screen.dart';
 import 'dish_scan_service.dart';
@@ -29,18 +30,18 @@ class DishErrorScreen extends StatelessWidget {
       DishScanFailure.lowQuality => lowImageQualityError,
       DishScanFailure.notSingleDish => (
         'Not a Single Dish',
-        'Please capture one food dish only.',
-        Icons.restaurant_outlined,
+        'Please capture a photo that shows only one dish.',
+        const DishPlateIcon(size: 40, color: AppColors.tagOrange),
       ),
       DishScanFailure.unsupportedDish => (
         'Unsupported Dish',
         'This dish is currently not supported.',
-        Icons.search_off,
+        const Icon(Icons.search_off),
       ),
       DishScanFailure.connection => (
         'Connection Error',
         'Unable to complete the scan. Please check your connection and try again.',
-        Icons.wifi_off_rounded,
+        const Icon(Icons.wifi_off_rounded),
       ),
     };
     final retrySame = failure == DishScanFailure.connection;

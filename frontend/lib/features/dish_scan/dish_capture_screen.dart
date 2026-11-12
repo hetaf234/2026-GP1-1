@@ -133,8 +133,7 @@ class _DishCaptureScreenState extends State<DishCaptureScreen> {
                                           ? CustomPaint(
                                               painter: _DishFramePainter(),
                                               child: const Center(
-                                                child: Icon(
-                                                  Icons.restaurant_outlined,
+                                                child: DishPlateIcon(
                                                   size: 64,
                                                   color: Color(0xFFE5B869),
                                                 ),
