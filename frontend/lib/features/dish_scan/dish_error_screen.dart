@@ -49,7 +49,7 @@ class DishErrorScreen extends StatelessWidget {
       title: title,
       message: message,
       icon: icon,
-      actionLabel: retrySame ? 'Try Again' : 'Choose Another Photo',
+      actionLabel: retrySame ? 'Try Again' : 'Try Another Photo',
       onAction: () => Navigator.of(context).pushReplacement(
         MaterialPageRoute<void>(
           builder: (_) => retrySame

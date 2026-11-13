@@ -103,7 +103,7 @@ class ErrorScreen extends StatelessWidget {
         title: title,
         message: message,
         icon: icon,
-        actionLabel: 'Choose Another Photo',
+        actionLabel: 'Try Another Photo',
         onAction: () => _handleRetry(context),
         onBack: () => Navigator.of(context).pop(),
       );
@@ -178,7 +178,6 @@ class ErrorScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 32),
 
-                          // Primary Try Again Button
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 24),
                             child: SizedBox(
@@ -194,9 +193,11 @@ class ErrorScreen extends StatelessWidget {
                                   ),
                                   elevation: 0,
                                 ),
-                                child: const Text(
-                                  'Try Again',
-                                  style: TextStyle(
+                                child: Text(
+                                  isUnreadable
+                                      ? 'Try Another Photo'
+                                      : 'Try Again',
+                                  style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                   ),
